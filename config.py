@@ -6,8 +6,12 @@ supporting both .env files and system environment variables.
 """
 
 import os
+
 from dotenv import load_dotenv
 from supabase import create_client, Client
+import logging
+from rich.logging import RichHandler
+from rich.console import Console
 
 # Load environment variables from .env file
 load_dotenv()
@@ -16,8 +20,9 @@ load_dotenv()
 class Config:
     """Configuration class for the books data pipeline."""
 
-    # Database configuration
-    DATABASE_URL = os.getenv("DATABASE_URL")
+    # Supabase configuration
+    SUPABASE_URL = os.getenv("SUPABASE_URL")
+    SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 
     OPEN_LIBRARY_BASE_URL = os.getenv(
         "OPEN_LIBRARY_BASE_URL", "https://openlibrary.org"
@@ -42,7 +47,44 @@ class Config:
         Returns:
             str: PostgreSQL connection string
         """
-        if cls.DATABASE_URL:
-            return cls.DATABASE_URL
+        if cls.SUPABASE_URL:
+            return cls.SUPABASE_URL
 
         return None
+
+    @classmethod
+    def get_supabase_client(cls) -> Client:
+        """
+        Get a Supabase client instance.
+
+        Returns:
+            Client: Configured Supabase client
+        """
+        return create_client(cls.SUPABASE_URL, cls.SUPABASE_SERVICE_ROLE_KEY)
+
+    @classmethod
+    def setup_logging(cls):
+        """Configure colored logging using Rich."""
+        console = Console()
+
+        logging.basicConfig(
+            level=getattr(logging, Config.LOG_LEVEL.upper()),
+            format="%(message)s",
+            datefmt="[%X]",
+            handlers=[
+                RichHandler(
+                    console=console,
+                    rich_tracebacks=True,
+                    show_path=True,
+                    show_time=True,
+                )
+            ],
+        )
+
+        # Suppress HTTP request logging from httpx/httpcore to avoid exposing sensitive URLs
+        logging.getLogger("httpx").setLevel(logging.WARNING)
+        logging.getLogger("httpcore").setLevel(logging.WARNING)
+        logging.getLogger("httpcore.http11").setLevel(logging.WARNING)
+        logging.getLogger("httpcore.http2").setLevel(logging.WARNING)
+
+        return logging.getLogger(__name__)
