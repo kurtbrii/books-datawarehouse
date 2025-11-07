@@ -107,6 +107,7 @@ books-data-warehouse/
 | job_id         | SERIAL    | NOT NULL | Primary key (auto-increment) |
 | title          | TEXT      | NOT NULL | Book title from CSV |
 | author         | TEXT      | NOT NULL | Book author from CSV |
+| isbn           | VARCHAR(20) | NULL     | Optional ISBN identifier (used for duplicate detection) |
 | status         | VARCHAR(20) | NOT NULL | Job status: 'pending', 'processing', 'completed', 'failed' |
 | error_message  | TEXT      | NULL     | Error details if job failed |
 | retry_count    | INTEGER   | NOT NULL | Number of retry attempts (default 0) |
