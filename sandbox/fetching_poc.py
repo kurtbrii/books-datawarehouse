@@ -3,7 +3,7 @@ import json
 
 # Test books from your CSV
 test_books = [
-    {"title": "A Court of Wings and Ruin", "author": "Sarah J. Maas"},
+    {"title": "A Court of Wings and Ruin", "author": "Sarah Maas"},
     {"title": "Turtles All the Way Down", "author": "John Green"},
 ]
 

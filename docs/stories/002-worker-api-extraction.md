@@ -9,7 +9,7 @@ Implement the `worker.py` orchestrator and `extractors/` modules that process pe
 
 ## Acceptance Criteria
 - [ ] `worker.py` queries the database for all jobs with status='pending'
-- [ ] Jobs are fetched in configurable batches (BATCH_SIZE environment variable, default 100)
+- [x] Jobs are fetched in configurable batches (BATCH_SIZE environment variable, default 100)
 - [ ] For each batch, job status is updated to 'processing' to prevent duplicate processing
 - [ ] `extractors/open_library.py` fetches book data from Open Library API with:
   - Book metadata (description, genres, publication date)
@@ -37,7 +37,7 @@ Implement the `worker.py` orchestrator and `extractors/` modules that process pe
 
 ### API Integration
 **Open Library API:**
-- Base URL: `https://openlibrary.org` (from process_flow.md, is public)
+- Base URL: `https://openlibrary.org` (from process_flow.md, is public) 
 - Endpoints: Search by ISBN/title, author lookup
 - Returns: JSON with book and author metadata
 
@@ -45,6 +45,48 @@ Implement the `worker.py` orchestrator and `extractors/` modules that process pe
 - Base URL: `https://www.googleapis.com/books/v1` (from process_flow.md, is public)
 - Endpoints: Search by ISBN/title
 - Returns: JSON with book metadata, ratings, page counts
+
+---
+
+## Data to Extract from Each API
+
+### Google Books
+
+- title
+- description
+- pageCount
+- language
+- publishedDate
+- publisher
+- authors (array)
+- categories (genres)
+- industryIdentifiers (ISBN-13 preferred)
+- averageRating
+- ratingsCount
+- imageLinks.thumbnail
+- saleInfo.isEbook
+- saleInfo.saleability
+- saleInfo.listPrice.amount
+- saleInfo.listPrice.currencyCode
+- saleInfo.retailPrice.amount
+- saleInfo.retailPrice.currencyCode
+
+### Open Library
+
+- title
+- key (work_key)
+- language (first/main language)
+- cover_image
+- author_name (array)
+- author_key (array)
+- edition_count
+- isbn_13 or isbn_10 (convert to ISBN-13)
+- publishers
+- publish_date
+- description
+- subjects (genres)
+
+---
 
 ### Database Changes
 - Update `jobs` table to track processing status transitions
@@ -94,4 +136,59 @@ Implement the `worker.py` orchestrator and `extractors/` modules that process pe
 6. Add comprehensive error handling and logging
 7. Write unit and integration tests
 8. Test with sample job data
+
+---
+
+## Validation Notes
+**Last validated:** 2025-01-07
+**Overall completion:** 9% (1/11 criteria)
+
+### Completed Items:
+- ✅ **Batch size configuration**: BATCH_SIZE environment variable is properly configured in config.py with default value of 100
+
+### Incomplete Items:
+#### Core Missing Components:
+1. **worker.py** - File does not exist
+   - Need to implement database querying for pending jobs
+   - Need to implement batch processing logic
+   - Need to implement job status updates (pending → processing)
+   - Need to implement error handling and logging
+   - Need to implement integration with extractors
+
+2. **extractors/open_library.py** - File exists but is empty
+   - No API client implementation
+   - No error handling for network issues, 404s, rate limiting
+   - No data extraction logic for book metadata, authors, publishers
+
+3. **extractors/google_books.py** - File exists but is empty
+   - No API client implementation
+   - No error handling for network issues, 404s, rate limiting
+   - No data extraction logic for book metadata, authors, publishers, ISBN
+
+#### Configuration Gaps:
+4. **API_TIMEOUT** - Missing from config.py
+   - Required for setting timeout on API requests
+   - Should have default value of 30 seconds per story requirements
+
+### Existing Infrastructure:
+- ✅ Database schema supports job status tracking (pending, processing, completed, failed)
+- ✅ Job model properly defines status enum
+- ✅ Base URLs for both APIs are configured
+- ✅ Logging infrastructure is in place
+- ✅ Extractors package structure exists
+
+### Blockers & Dependencies:
+- Story 001 (publisher) is complete, so jobs table can be populated
+- Story 003 (transformation/loading) is blocked until this story is complete
+
+### Next Steps:
+1. Add API_TIMEOUT to config.py
+2. Implement Open Library extractor with full API integration and error handling
+3. Implement Google Books extractor with full API integration and error handling
+4. Create worker.py with:
+   - Database querying for pending jobs
+   - Batch processing with configurable size
+   - Job status management
+   - Error handling and logging
+   - Integration with both extractors
 

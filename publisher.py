@@ -11,10 +11,11 @@ import sys
 from pathlib import Path
 from typing import Dict, Optional
 
+from models.job import JobCreate
+
 from logging import Logger
 from supabase import Client as SupabaseClient
 from config import Config
-from models.job import JobCreate
 
 
 def validate_row(
