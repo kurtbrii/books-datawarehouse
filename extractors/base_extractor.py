@@ -7,14 +7,6 @@ from logging import Logger
 
 class Extractor(ABC):
     @staticmethod
-    def _setup_job_data(job_data: dict):
-        """Extract common job data and setup logging."""
-        logger = Config.setup_logging()
-        title = job_data["title"]
-        author = job_data["author"]
-        return logger, title, author
-
-    @staticmethod
     def _fetch_from_api(
         url: str, logger: Logger, title: str, author: str, api_name: str
     ) -> dict:

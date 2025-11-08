@@ -1,11 +1,11 @@
 from config import Config
 from extractors.base_extractor import Extractor
+from logging import Logger
 
 
 class GoogleBooksExtractor(Extractor):
-    def extract(self, job_data: dict) -> dict:
+    def extract(self, logger: Logger, title: str, author: str) -> dict:
         """Fetch Google Books data for a book."""
-        logger, title, author = self._setup_job_data(job_data)
 
         logger.info(f"Fetching Google Books data for {title} by {author}")
 
