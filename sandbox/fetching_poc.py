@@ -87,9 +87,9 @@ if __name__ == "__main__":
     print("=" * 60)
 
     for book in test_books:
-        test_open_library(book["title"], book["author"])
+        # test_open_library(book["title"], book["author"])
         print("\n" + "=" * 60 + "\n")
-        # test_google_books(book["title"], book["author"])
+        test_google_books(book["title"], book["author"])
         print("\n" + "=" * 60 + "\n")
 
     # print("POC Tests Complete!")

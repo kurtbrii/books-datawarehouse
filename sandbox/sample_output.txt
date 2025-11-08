@@ -1,0 +1,151 @@
+======================== GOOGLE BOOKS API ========================
+{
+  "kind": "books#volumes",
+  "totalItems": 1000000,
+  "items": [
+    {
+      "kind": "books#volume",
+      "id": "440oDwAAQBAJ",
+      "etag": "hWh9m19ryeI",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/440oDwAAQBAJ",
+      "volumeInfo": {
+        "title": "Turtles All the Way Down",
+        "authors": [
+          "John Green"
+        ],
+        "publisher": "Penguin",
+        "publishedDate": "2017-10-10",
+        "description": "THE INSTANT #1 BESTSELLER! FEATURED ON 60 MINUTES and FRESH AIR \u201cSo surprising and moving and true that I became completely unstrung.\u201d \u2013 The New York Times Named a best book of the year by: The New York Times, NPR, TIME, Wall Street Journal, Boston Globe, Entertainment Weekly, Southern Living, Publishers Weekly, BookPage, A.V. Club, Bustle, BuzzFeed, Vulture, and many more! JOHN GREEN, the acclaimed author of Looking for Alaska and The Fault in Our Stars, returns with a story of shattering, unflinching clarity in this brilliant novel of love, resilience, and the power of lifelong friendship. Aza Holmes never intended to pursue the disappearance of fugitive billionaire Russell Pickett, but there\u2019s a hundred-thousand-dollar reward at stake and her Best and Most Fearless Friend, Daisy, is eager to investigate. So together, they navigate the short distance and broad divides that separate them from Pickett\u2019s son Davis. Aza is trying. She is trying to be a good daughter, a good friend, a good student, and maybe even a good detective, while also living within the ever-tightening spiral of her own thoughts.",
+        "industryIdentifiers": [
+          {
+            "type": "ISBN_13",
+            "identifier": "9780525555353"
+          },
+          {
+            "type": "ISBN_10",
+            "identifier": "0525555358"
+          }
+        ],
+        "readingModes": {
+          "text": true,
+          "image": false
+        },
+        "pageCount": 306,
+        "printType": "BOOK",
+        "categories": [
+          "Young Adult Fiction"
+        ],
+        "averageRating": 4,
+        "ratingsCount": 6,
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": true,
+        "contentVersion": "2.13.9.0.preview.2",
+        "panelizationSummary": {
+          "containsEpubBubbles": false,
+          "containsImageBubbles": false
+        },
+        "imageLinks": {
+          "smallThumbnail": "http://books.google.com/books/content?id=440oDwAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+          "thumbnail": "http://books.google.com/books/content?id=440oDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+        },
+        "language": "en",
+        "previewLink": "http://books.google.com.ph/books?id=440oDwAAQBAJ&printsec=frontcover&dq=Turtles+All+the+Way+Down+John+Green&hl=&cd=1&source=gbs_api",
+        "infoLink": "https://play.google.com/store/books/details?id=440oDwAAQBAJ&source=gbs_api",
+        "canonicalVolumeLink": "https://play.google.com/store/books/details?id=440oDwAAQBAJ"
+      },
+      "saleInfo": {
+        "country": "PH",
+        "saleability": "FOR_SALE",
+        "isEbook": true,
+        "listPrice": {
+          "amount": 765.57,
+          "currencyCode": "PHP"
+        },
+        "retailPrice": {
+          "amount": 520.59,
+          "currencyCode": "PHP"
+        },
+        "buyLink": "https://play.google.com/store/books/details?id=440oDwAAQBAJ&rdid=book-440oDwAAQBAJ&rdot=1&source=gbs_api",
+        "offers": [
+          {
+            "finskyOfferType": 1,
+            "listPrice": {
+              "amountInMicros": 765570000,
+              "currencyCode": "PHP"
+            },
+            "retailPrice": {
+              "amountInMicros": 520590000,
+              "currencyCode": "PHP"
+            }
+          }
+        ]
+      },
+      "accessInfo": {
+        "country": "PH",
+        "viewability": "PARTIAL",
+        "embeddable": true,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": true,
+          "acsTokenLink": "http://books.google.com.ph/books/download/Turtles_All_the_Way_Down-sample-epub.acsm?id=440oDwAAQBAJ&format=epub&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+        },
+        "pdf": {
+          "isAvailable": false
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=440oDwAAQBAJ&hl=&source=gbs_api",
+        "accessViewStatus": "SAMPLE",
+        "quoteSharingAllowed": false
+      },
+      "searchInfo": {
+        "textSnippet": "JOHN GREEN, the acclaimed author of Looking for Alaska and The Fault in Our Stars, returns with a story of shattering, unflinching clarity in this brilliant novel of love, resilience, and the power of lifelong friendship."
+      }
+    }
+  ]
+}
+
+
+======================== OPENLIBRARY API ========================
+{
+  "numFound": 6,
+  "start": 0,
+  "numFoundExact": true,
+  "num_found": 6,
+  "q": "Turtles All the Way Down John Green",
+  "documentation_url": "https://openlibrary.org/dev/docs/api/search",
+  "docs": [
+    {
+      "author_key": [
+        "OL5046634A"
+      ],
+      "author_name": [
+        "John Green"
+      ],
+      "cover_edition_key": "OL26428769M",
+      "cover_i": 8283871,
+      "ebook_access": "borrowable",
+      "edition_count": 23,
+      "first_publish_year": 2017,
+      "has_fulltext": true,
+      "ia": [
+        "wieadokoca0000unse",
+        "milveceshastasie0000gree",
+        "turtlesallwaydow0000gree"
+      ],
+      "ia_collection_s": "inlibrary;internetarchivebooks;openlibrary-d-ol;printdisabled",
+      "key": "/works/OL17842319W",
+      "language": [
+        "eng",
+        "fre",
+        "pol",
+        "spa"
+      ],
+      "lending_edition_s": "OL26439195M",
+      "lending_identifier_s": "wieadokoca0000unse",
+      "public_scan_b": false,
+      "title": "Turtles All the Way Down"
+    }
+  ]
+}
+
+
