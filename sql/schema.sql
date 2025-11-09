@@ -116,6 +116,7 @@ CREATE TABLE book_author_bridge (
     PRIMARY KEY (isbn, author_id)
 );
 
+
 CREATE INDEX idx_book_author_author_id ON book_author_bridge(author_id);
 
 -- book_genre_bridge: Links books to their genres/categories

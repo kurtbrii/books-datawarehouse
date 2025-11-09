@@ -1,20 +1,20 @@
+import json
 from config import Config
 from extractors.base_extractor import Extractor
 from logging import Logger
+from typing import Optional
 
 
 class GoogleBooksExtractor(Extractor):
-    def extract(self, logger: Logger, title: str, author: str) -> dict:
-        """Fetch Google Books data for a book."""
+    def extract(self, logger: Logger, isbn: str) -> Optional[dict]:
+        """Fetch Google Books data for a book using ISBN."""
 
-        logger.info(f"Fetching Google Books data for {title} by {author}")
+        logger.info(f"Fetching Google Books data for ISBN {isbn}")
 
-        query = f"intitle:{title} inauthor:{author}".replace(" ", "+")
-        url = f"{Config.GOOGLE_BOOKS_BASE_URL}/volumes?q={query}&maxResults=1"
+        query = f"isbn:{isbn}"
+        url = f"{Config.GOOGLE_BOOKS_BASE_URL}/volumes?q={query}"
 
-        response = self._fetch_from_api(url, logger, title, author, "Google Books")
-
-        # return the response if it is not None and if it has at least one item
+        response = self._fetch_from_api(url, logger, isbn, "Google Books")
 
         return (
             response

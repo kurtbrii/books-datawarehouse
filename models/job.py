@@ -17,8 +17,8 @@ class JobStatus(str, Enum):
 
     PENDING = "pending"
     PROCESSING = "processing"
-    COMPLETED = "completed"
     FAILED = "failed"
+    COMPLETED = "completed"
 
 
 class JobCreate(BaseModel):

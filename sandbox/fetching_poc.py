@@ -3,20 +3,19 @@ import json
 
 # Test books from your CSV
 test_books = [
-    {"title": "A Court of Wings and Ruin", "author": "Sarah Maas"},
-    {"title": "Turtles All the Way Down", "author": "John Green"},
+    {"isbn": "9781635575569"},
+    {"isbn": "9781338244663"},
 ]
 
 
-def test_open_library(title, author):
+def test_open_library(isbn):
     """Test Open Library API"""
     print(f"\n{'=' * 60}")
-    print(f"OPEN LIBRARY - {title} by {author}")
+    print(f"OPEN LIBRARY - ISBN {isbn}")
     print("=" * 60)
 
-    # Format query: replace spaces with +
-    query = f"{title} {author}".replace(" ", "+")
-    url = f"https://openlibrary.org/search.json?q={query}&limit=1"
+    # Query by ISBN only
+    url = f"https://openlibrary.org/search.json?isbn={isbn}"
 
     try:
         response = requests.get(url, timeout=10)
@@ -44,15 +43,15 @@ def test_open_library(title, author):
         print(f"✗ Error: {e}")
 
 
-def test_google_books(title, author):
+def test_google_books(isbn):
     """Test Google Books API"""
     print(f"\n{'=' * 60}")
-    print(f"GOOGLE BOOKS - {title} by {author}")
+    print(f"GOOGLE BOOKS - ISBN {isbn}")
     print("=" * 60)
 
-    # Format query
-    query = f"{title} {author}".replace(" ", "+")
-    url = f"https://www.googleapis.com/books/v1/volumes?q={query}&maxResults=1"
+    # Query by ISBN only
+    query = f"isbn:{isbn}"
+    url = f"https://www.googleapis.com/books/v1/volumes?q={query}"
 
     try:
         response = requests.get(url, timeout=10)
@@ -87,9 +86,9 @@ if __name__ == "__main__":
     print("=" * 60)
 
     for book in test_books:
-        # test_open_library(book["title"], book["author"])
+        test_open_library(book["isbn"])
         print("\n" + "=" * 60 + "\n")
-        test_google_books(book["title"], book["author"])
+        test_google_books(book["isbn"])
         print("\n" + "=" * 60 + "\n")
 
     # print("POC Tests Complete!")

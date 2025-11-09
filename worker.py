@@ -4,6 +4,7 @@ from typing import Dict
 from config import Config
 from models.job import JobStatus
 from etl.extract import extract_book_data
+from etl.transform import transform_book_data
 
 from logging import Logger
 
@@ -53,7 +54,7 @@ def main():
 
     response = (
         supabase_client.table("jobs")
-        .select("job_id, title, author, retry_count")
+        .select("job_id, isbn, retry_count")
         .eq("status", JobStatus.PENDING.value)
         .limit(Config.BATCH_SIZE)
         .execute()
@@ -62,12 +63,11 @@ def main():
     for job_data in response.data:
         worker_stats["total_fetched"] += 1
         job_id = job_data["job_id"]
-        title = job_data["title"]
-        author = job_data["author"]
+        isbn = job_data["isbn"]
         retry_count = job_data.get("retry_count", 0)
 
         logger.info(
-            f"Processing job {job_id}: {title} by {author} (retry_count: {retry_count})"
+            f"Processing job {job_id}: ISBN {isbn} (retry_count: {retry_count})"
         )
 
         # ! extraction phase
@@ -77,8 +77,12 @@ def main():
         )
 
         if not google_books_data or not open_library_data:
-            logger.error(f"❌ Failed to extract data for {title} by {author}")
+            logger.error(f"❌ Failed to extract data for ISBN {isbn}")
             continue
+
+        transformed_data = transform_book_data(
+            logger, google_books_data, open_library_data
+        )
 
         # TODO: add pydantic validation in transform
     # TODO: add worker_stats after loading to database

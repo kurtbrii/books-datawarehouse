@@ -12,10 +12,10 @@ from pathlib import Path
 from typing import Dict, Optional
 
 from models.job import JobCreate
+from config import Config
 
 from logging import Logger
 from supabase import Client as SupabaseClient
-from config import Config
 
 
 def validate_row(
@@ -34,6 +34,12 @@ def validate_row(
     """
     title = row.get("Title", "").strip()
     author = row.get("Author", "").strip()
+    isbn = row.get("ISBN", "").strip()
+
+    if not isbn:
+        error_msg = f"Row {row_num}: Missing or empty ISBN"
+        logger.warning(f"📕 {error_msg}")
+        return False, error_msg
 
     if not title:
         error_msg = f"Row {row_num}: Missing or empty title"
@@ -48,36 +54,26 @@ def validate_row(
     return True, None
 
 
-def check_duplicate_title_author(
-    supabase_client, title: str, author: str, logger
-) -> bool:
+def check_duplicate_isbn(supabase_client, isbn: str, logger) -> bool:
     """
     Check if a job with the given ISBN already exists.
 
     Args:
         supabase_client: Supabase client instance
-        isbn: ISBN to check (can be None)
+        isbn: ISBN to check
         logger: Logger instance
 
     Returns:
         True if duplicate exists, False otherwise
     """
-    if not title or not author:
+    if not isbn:
         return False
 
     try:
-        response = (
-            supabase_client.table("jobs")
-            .select("*")
-            .eq("title", title)
-            .eq("author", author)
-            .execute()
-        )
+        response = supabase_client.table("jobs").select("*").eq("isbn", isbn).execute()
         return len(response.data) > 0
     except Exception as e:
-        logger.error(
-            f"🔍 Error checking for duplicate title {title} and author {author}: {e}"
-        )
+        logger.error(f"🔍 Error checking for duplicate ISBN {isbn}: {e}")
         # If we can't check, assume not duplicate to allow processing
         return False
 
@@ -251,18 +247,11 @@ def main():
             # Extract and clean data
             title = row_data["Title"].strip()
             author = row_data["Author"].strip()
-            isbn = row_data.get("ISBN", "").strip() or None
+            isbn = row_data.get("ISBN", "").strip()
 
-            # Check for duplicates (if title and author are provided)
-            if (
-                title
-                and author
-                and check_duplicate_title_author(supabase_client, title, author, logger)
-            ):
-                logger.warning(
-                    f"🔁 Row {row_num}: Skipping duplicate title '{title}' and author '{author}'"
-                    f"(Title: {title}, Author: {author})"
-                )
+            # Check for duplicates by ISBN
+            if check_duplicate_isbn(supabase_client, isbn, logger):
+                logger.warning(f"🔁 Row {row_num}: Skipping duplicate ISBN '{isbn}'")
                 stats["duplicates_skipped"] += 1
                 continue
 

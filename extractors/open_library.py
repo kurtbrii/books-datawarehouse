@@ -6,14 +6,13 @@ from logging import Logger
 class OpenLibraryExtractor(Extractor):
     """Extractor for Open Library API."""
 
-    def extract(self, logger: Logger, title: str, author: str) -> dict:
-        """Extract Open Library data for a book."""
-        logger.info(f"Fetching Open Library data for {title} by {author}")
+    def extract(self, logger: Logger, isbn: str) -> dict:
+        """Extract Open Library data for a book using ISBN."""
+        logger.info(f"Fetching Open Library data for ISBN {isbn}")
 
-        query = f"{title} {author}".replace(" ", "+")
-        url = f"{Config.OPEN_LIBRARY_BASE_URL}/search.json?q={query}&limit=1"
+        url = f"{Config.OPEN_LIBRARY_BASE_URL}/search.json?isbn={isbn}"
 
-        results = self._fetch_from_api(url, logger, title, author, "Open Library")
+        results = self._fetch_from_api(url, logger, isbn, "Open Library")
 
         return (
             results if results is not None and results.get("numFound", 0) > 0 else None
