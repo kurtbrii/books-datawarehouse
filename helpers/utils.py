@@ -1,4 +1,4 @@
-from config import Config
+from supabase import Client
 from logging import Logger
 from models.job import JobStatus
 from typing import Optional
@@ -6,20 +6,19 @@ from typing import Optional
 
 def update_job_status(
     logger: Logger,
-    supabase_client,
-    title: str,
-    author: str,
+    supabase_client: Client,
+    job_id: int,
     status: JobStatus,
     retry_count: Optional[int] = None,
     error_message: Optional[str] = None,
 ) -> bool:
     """
-    Update job status by title and author (composite key).
+    Update job status by job_id (primary key).
 
     Args:
+        logger: Logger instance
         supabase_client: Supabase client instance
-        title: Book title
-        author: Book author
+        job_id: Unique job identifier
         status: New status (JobStatus enum)
         retry_count: Updated retry count (optional)
         error_message: Error message if failed (optional)
@@ -42,14 +41,12 @@ def update_job_status(
         response = (
             supabase_client.table("jobs")
             .update(update_payload)
-            .eq("title", title)
-            .eq("author", author)
+            .eq("job_id", job_id)
             .execute()
         )
 
         return len(response.data) > 0
 
     except Exception as e:
-        logger = Config.setup_logging()
-        logger.error(f"Failed to update job status for {title} by {author}: {str(e)}")
+        logger.error(f"Failed to update job status for job_id {job_id}: {str(e)}")
         return False

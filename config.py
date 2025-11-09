@@ -60,6 +60,10 @@ class Config:
         Returns:
             Client: Configured Supabase client
         """
+        if not cls.SUPABASE_URL or not cls.SUPABASE_SERVICE_ROLE_KEY:
+            raise ValueError(
+                "SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables are required"
+            )
         return create_client(cls.SUPABASE_URL, cls.SUPABASE_SERVICE_ROLE_KEY)
 
     @classmethod

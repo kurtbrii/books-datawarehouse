@@ -45,13 +45,15 @@ def main():
         "failed_open_library": 0,
     }
 
-    if not supabase_client:
-        logger.error("🔴 Failed to connect to Supabase")
+    try:
+        supabase_client = Config.get_supabase_client()
+    except Exception as e:
+        logger.error(f"🔴 Failed to connect to Supabase: {e}")
         sys.exit(1)
 
     response = (
         supabase_client.table("jobs")
-        .select("title, author, retry_count")
+        .select("job_id, title, author, retry_count")
         .eq("status", JobStatus.PENDING.value)
         .limit(Config.BATCH_SIZE)
         .execute()
@@ -59,15 +61,27 @@ def main():
 
     for job_data in response.data:
         worker_stats["total_fetched"] += 1
+        job_id = job_data["job_id"]
         title = job_data["title"]
         author = job_data["author"]
         retry_count = job_data.get("retry_count", 0)
 
-        logger.info(f"Processing job: {title} by {author} (retry_count: {retry_count})")
-        worker_stats, google_books_data, open_library_data = extract_book_data(
-            logger, worker_stats, supabase_client, job_data
+        logger.info(
+            f"Processing job {job_id}: {title} by {author} (retry_count: {retry_count})"
         )
 
+        # ! extraction phase
+        # extract the raw json data from the APIs
+        google_books_data, open_library_data = extract_book_data(
+            logger, supabase_client, job_data
+        )
+
+        if not google_books_data or not open_library_data:
+            logger.error(f"❌ Failed to extract data for {title} by {author}")
+            continue
+
+        # TODO: add pydantic validation in transform
+    # TODO: add worker_stats after loading to database
     print_summary(logger, worker_stats)
 
 

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 import requests
-from config import Config
+from typing import Optional
 
 from logging import Logger
 
@@ -9,7 +9,7 @@ class Extractor(ABC):
     @staticmethod
     def _fetch_from_api(
         url: str, logger: Logger, title: str, author: str, api_name: str
-    ) -> dict:
+    ) -> Optional[dict]:
         """Make HTTP request to API and handle common errors."""
         try:
             response = requests.get(url, timeout=10)
@@ -28,6 +28,5 @@ class Extractor(ABC):
             return None
 
     @abstractmethod
-    def extract(self, job_data: dict) -> dict:
-        """Fetch data from API for a book. Must be implemented by subclasses."""
-        pass
+    def extract(self, logger: Logger, title: str, author: str) -> dict:
+        """Extract data from API for a book. Must be implemented by subclasses."""
