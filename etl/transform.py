@@ -1,10 +1,12 @@
+import time
 import json
 from datetime import datetime
 from typing import Dict, Any, Optional
+from logging import Logger
 
 from transformers.date_transformer import DateTransformer
-
-from logging import Logger
+from transformers.publisher_transformer import PublisherTransformer
+from transformers.author_transformer import AuthorTransformer
 
 
 def transform_book_data(
@@ -84,18 +86,26 @@ def transform_book_data(
     8. fact_book_metrics - References dim_books and dim_date
     """
 
-    # print(json.dumps(google_books_data, indent=2))
-    # print("\n" + "=" * 60 + "\n")
-    # print(json.dumps(open_library_data, indent=2))
+    # gb = Google Books
+    gb_general_info: dict = google_books_data.get("items", [{}])[0]
+    gb_book_info: dict = gb_general_info.get("volumeInfo", {})
 
-    google_books_book_info: dict = google_books_data.get("items", [{}])[0].get(
-        "volumeInfo", {}
+    # ol = Open Library
+    ol_general_info: dict = open_library_data.get("docs", [{}])[0]
+
+    date_dimension: dict = DateTransformer().transform_date_attributes(
+        gb_book_info, logger
     )
 
-    open_library_book_info: dict = open_library_data.get("docs", [{}])[0]
+    publisher_dimension: dict = PublisherTransformer().transform_publisher_attributes(
+        gb_book_info
+    )
 
-    date_dimension: dict = DateTransformer().extract_date_dimension(
-        google_books_book_info.get("publishedDate"), logger
+    # print(publisher_dimension)
+    # print(date_dimension)
+
+    author_dimension: dict = AuthorTransformer().transform_author_attributes(
+        gb_book_info, ol_general_info
     )
 
     return {

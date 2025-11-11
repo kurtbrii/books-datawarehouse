@@ -6,6 +6,10 @@ from typing import Optional
 
 
 class GoogleBooksExtractor(Extractor):
+    """
+    Class to extract data from Google Books API.
+    """
+
     def extract(self, logger: Logger, isbn: str) -> Optional[dict]:
         """Fetch Google Books data for a book using ISBN."""
 

@@ -1,12 +1,20 @@
+"""
+DateTransformer class for extracting and transforming date strings into date dimension records.
+"""
+
 from datetime import datetime
 from typing import Dict, Any, Optional
 from logging import Logger
 
 
 class DateTransformer:
+    """
+    DateTransformer class for extracting and transforming date strings into date dimension records.
+    """
+
     @staticmethod
-    def extract_date_dimension(
-        date_str: Optional[str], logger: Logger
+    def transform_date_attributes(
+        gb_info: Optional[dict], logger: Logger
     ) -> Optional[Dict[str, Any]]:
         """
         Extract and transform a date string into a date dimension record.
@@ -39,6 +47,8 @@ class DateTransformer:
                 'is_weekend': False
             }
         """
+
+        date_str = gb_info.get("publishedDate", None)
         if not date_str:
             logger.debug("No date provided for date dimension extraction")
             return None
@@ -80,6 +90,7 @@ class DateTransformer:
             day_of_week = day_names[parsed_date.weekday()]
             is_weekend = parsed_date.weekday() >= 5
 
+            # TODO: pydantic validation here
             date_record = {
                 "date_key": date_key,
                 "full_date": parsed_date,
