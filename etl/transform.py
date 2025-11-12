@@ -104,7 +104,7 @@ def transform_book_data(
     # print(publisher_dimension)
     # print(date_dimension)
 
-    author_dimension: dict = AuthorTransformer().transform_author_attributes(
+    author_dimension: dict = AuthorTransformer().merge_author_sources(
         gb_book_info, ol_general_info
     )
 
