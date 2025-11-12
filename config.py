@@ -36,6 +36,46 @@ class Config:
     BATCH_SIZE = int(os.getenv("BATCH_SIZE", "100"))
     RETRY_MAX_ATTEMPTS = int(os.getenv("RETRY_MAX_ATTEMPTS", "3"))
 
+    LANGUAGE_CODE_MAP = {
+        "eng": "en",
+        "fre": "fr",
+        "fra": "fr",  # French has two 3-letter codes
+        "spa": "es",
+        "ger": "de",
+        "deu": "de",  # German has two codes
+        "ita": "it",
+        "por": "pt",
+        "rus": "ru",
+        "jpn": "ja",
+        "chi": "zh",
+        "zho": "zh",  # Chinese has two codes
+        "kor": "ko",
+        "ara": "ar",
+        "pol": "pl",
+        "dut": "nl",
+        "nld": "nl",  # Dutch has two codes
+        "heb": "he",
+        "gre": "el",
+        "ell": "el",  # Greek has two codes
+        "tur": "tr",
+        "swe": "sv",
+        "dan": "da",
+        "nor": "no",
+        "fin": "fi",
+        "ces": "cs",  # Czech
+        "hun": "hu",
+        "ron": "ro",  # Romanian
+        "tha": "th",
+        "vie": "vi",
+        "ind": "id",  # Indonesian
+        "msa": "ms",  # Malay
+        "hin": "hi",
+        "ben": "bn",
+        "urd": "ur",
+        "per": "fa",
+        "fas": "fa",  # Persian has two codes
+    }
+
     @classmethod
     def get_connection_string(cls):
         """

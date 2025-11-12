@@ -59,7 +59,6 @@ class DateTransformer:
                 # Try ISO format first (YYYY-MM-DD)
                 if len(date_str) == 10 and date_str.count("-") == 2:
                     parsed_date = datetime.strptime(date_str, "%Y-%m-%d").date()
-                    print(parsed_date)
                 # Try year only format (YYYY)
                 elif len(date_str) == 4 and date_str.isdigit():
                     parsed_date = datetime.strptime(date_str, "%Y").date()

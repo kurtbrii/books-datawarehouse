@@ -1,12 +1,12 @@
 import sys
+import time
+from logging import Logger
 
 from typing import Dict
 from config import Config
 from models.job import JobStatus
-from etl.extract import extract_book_data
-from etl.transform import transform_book_data
-
-from logging import Logger
+from etl.extract import Extractor
+from etl.transform import Transformer
 
 
 def print_summary(logger: Logger, stats: Dict[str, int]) -> None:
@@ -72,7 +72,7 @@ def main():
 
         # ! extraction phase
         # extract the raw json data from the APIs
-        google_books_data, open_library_data = extract_book_data(
+        google_books_data, open_library_data = Extractor().extract_book_data(
             logger, supabase_client, job_data
         )
 
@@ -80,12 +80,24 @@ def main():
             logger.error(f"❌ Failed to extract data for ISBN {isbn}")
             continue
 
-        transformed_data = transform_book_data(
+        # ! transformation and loading phase
+        independent_dimensions = Transformer().transform_independent_dimensions(
             logger, google_books_data, open_library_data
         )
 
+        print(independent_dimensions.get("date_dimension"))
+        print(independent_dimensions.get("publisher_dimension"))
+        print(independent_dimensions.get("author_dimension"))
+        print(independent_dimensions.get("genre_dimension"))
+
+        book_dimension = Transformer().transform_book_data(
+            google_books_data, open_library_data
+        )
+
+        time.sleep(1000)
+
         # TODO: add pydantic validation in transform
-    # TODO: add worker_stats after loading to database
+        # TODO: add worker_stats after loading to database
     print_summary(logger, worker_stats)
 
 

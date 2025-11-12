@@ -16,7 +16,7 @@ class GoogleBooksExtractor(Extractor):
         logger.info(f"Fetching Google Books data for ISBN {isbn}")
 
         query = f"isbn:{isbn}"
-        url = f"{Config.GOOGLE_BOOKS_BASE_URL}/volumes?q={query}"
+        url = f"{Config.GOOGLE_BOOKS_BASE_URL}/volumes?q={query}&country=US"  # US for USD currency
 
         response = self._fetch_from_api(url, logger, isbn, "Google Books")
 
