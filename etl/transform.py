@@ -104,7 +104,7 @@ class Transformer:
     def transform_book_data(
         google_books_data: Optional[Dict[str, Any]],
         open_library_data: Optional[Dict[str, Any]],
-    ) -> dict:
+    ) -> Dict[str, Any]:
         """
         Transform book data from multiple API sources.
 
@@ -121,4 +121,4 @@ class Transformer:
             gb_book_info, gb_general_info, ol_general_info
         )
 
-        return {"book_dimension": book_dimension}
+        return book_dimension

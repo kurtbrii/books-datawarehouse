@@ -1,6 +1,7 @@
 from supabase import Client
 from typing import Dict, Any, List
 from datetime import datetime, timezone
+from helpers.constants import CONFLICT_COLUMNS
 
 from config import Config
 
@@ -19,18 +20,25 @@ class GeneralLoader:
                 row["updated_at"] = datetime.now(timezone.utc).isoformat()
 
         # Map table names to their conflict columns for upsert
-        conflict_columns = {
-            "dim_date": "date_key",
-            "dim_publisher": "name",
-            "dim_author": "ol_author_key",
-            "dim_genre": "genre_name",
-        }
-
-        on_conflict = conflict_columns.get(table_name)
-
+        on_conflict = CONFLICT_COLUMNS.get(table_name)
         response = (
             GeneralLoader.supabase_client.table(table_name)
             .upsert(independent_dimensions, on_conflict=on_conflict)
+            .execute()
+        )
+
+        return response.data
+
+    @staticmethod
+    def general_loader(
+        table_name: str,
+        meta_data: Dict[str, Any],
+    ) -> List[Dict[str, Any]]:
+
+        on_conflict = CONFLICT_COLUMNS.get(table_name)
+        response = (
+            GeneralLoader.supabase_client.table(table_name)
+            .upsert(meta_data, on_conflict=on_conflict)
             .execute()
         )
 

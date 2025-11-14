@@ -4,6 +4,16 @@ from models.job import JobStatus
 from typing import Optional
 
 
+def get_id_name(dim_name: str) -> str:
+    ID_NAME_MAP = {
+        "dim_date": "date_key",
+        "dim_publisher": "publisher_id",
+        "dim_author": "author_id",
+        "dim_genre": "genre_id",
+    }
+    return ID_NAME_MAP.get(dim_name, None)
+
+
 def update_job_status(
     logger: Logger,
     supabase_client: Client,

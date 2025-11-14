@@ -3,6 +3,7 @@ import time
 from logging import Logger
 
 from typing import Dict
+
 from config import Config
 from models.job import JobStatus
 from etl.extract import Extractor
@@ -91,14 +92,40 @@ def main():
         )
 
         # ! load independent dimensions
-        dim_response = Loader().load_independent_dimensions(
+        dims_pk_id = Loader().load_independent_dimensions(
             logger, independent_dimensions
         )
 
-        # ! load dim_books, and the bridge tables
+        # ! load dim_books
+        dim_book_isbn = Loader().load_dim_books(
+            logger,
+            metadata={
+                "isbn": isbn,
+                **book_dimension,
+                "publisher_id": dims_pk_id["dim_publisher"][0],
+                "published_date_key": dims_pk_id["dim_date"][0],
+            },
+        )
 
-        # TODO: add pydantic validation inside all loading phase
-        # TODO: add worker_stats after loading to database
+        # ! load the bridge tables
+        # author bridge table
+        Loader().load_bridge_tables(
+            logger,
+            "book_author_bridge",
+            dim_book_isbn,
+            dims_pk_id["dim_author"],
+            "author",
+        )
+
+        # genre bridge table
+        Loader().load_bridge_tables(
+            logger,
+            "book_genre_bridge",
+            dim_book_isbn,
+            dims_pk_id["dim_genre"],
+            "genre",
+        )
+
     print_summary(logger, worker_stats)
 
 

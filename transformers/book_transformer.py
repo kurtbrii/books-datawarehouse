@@ -229,13 +229,12 @@ class BookTransformer:
         merged_languages = BookTransformer._merge_languages(gb_language, ol_languages)
 
         return {
-            "title": cleaned_title if cleaned_title else None,
+            "title": cleaned_title if cleaned_title else "",
             "title_has_conflict": title_has_conflict,
-            "description": gb_book_info.get("description"),
+            "description": gb_book_info.get("description", ""),
             "language": merged_languages,
-            "page_count": gb_book_info.get("pageCount"),
-            "cover_image_id": gb_book_info.get("imageLinks", {}).get("thumbnail", None),
+            "page_count": gb_book_info.get("pageCount")
+            or None,  # Use None instead of 0 to satisfy DB constraint
+            "cover_image_id": gb_book_info.get("imageLinks", {}).get("thumbnail", ""),
             "work_key": "",  # this is not needed for now
-            # "created_at": datetime.now(timezone.utc).isoformat(), # this will be put in loader
-            # "updated_at": datetime.now(timezone.utc).isoformat(), # this will be put in loader
         }
