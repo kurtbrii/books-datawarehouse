@@ -236,6 +236,6 @@ class BookTransformer:
             "page_count": gb_book_info.get("pageCount"),
             "cover_image_id": gb_book_info.get("imageLinks", {}).get("thumbnail", None),
             "work_key": "",  # this is not needed for now
-            "created_at": datetime.now(timezone.utc).isoformat(),
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            # "created_at": datetime.now(timezone.utc).isoformat(), # this will be put in loader
+            # "updated_at": datetime.now(timezone.utc).isoformat(), # this will be put in loader
         }

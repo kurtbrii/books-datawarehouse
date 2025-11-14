@@ -38,7 +38,7 @@ class DateTransformer:
             >>> date_record = extract_date_dimension('2017-10-10', logger)
             {
                 'date_key': 20171010,
-                'full_date': datetime.date(2017, 10, 10),
+                'full_date': '2017-10-10',
                 'year': 2017,
                 'month': 10,
                 'day': 10,
@@ -89,10 +89,9 @@ class DateTransformer:
             day_of_week = day_names[parsed_date.weekday()]
             is_weekend = parsed_date.weekday() >= 5
 
-            # TODO: pydantic validation here
             date_record = {
                 "date_key": date_key,
-                "full_date": parsed_date,
+                "full_date": parsed_date.isoformat(),
                 "year": parsed_date.year,
                 "month": month,
                 "day": parsed_date.day,

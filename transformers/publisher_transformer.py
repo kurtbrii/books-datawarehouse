@@ -58,5 +58,4 @@ class PublisherTransformer:
             r"\b(U\.?S\.?|UK|EU|CA|AU)\b$", "", cleaned, flags=re.IGNORECASE
         ).strip()
 
-        # TODO: pydantic validation here
         return {"name": cleaned}

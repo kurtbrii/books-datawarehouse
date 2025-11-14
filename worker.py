@@ -7,6 +7,7 @@ from config import Config
 from models.job import JobStatus
 from etl.extract import Extractor
 from etl.transform import Transformer
+from etl.load import Loader
 
 
 def print_summary(logger: Logger, stats: Dict[str, int]) -> None:
@@ -80,23 +81,23 @@ def main():
             logger.error(f"❌ Failed to extract data for ISBN {isbn}")
             continue
 
-        # ! transformation and loading phase
+        # ! transform independent dimensions and book dimension
         independent_dimensions = Transformer().transform_independent_dimensions(
             logger, google_books_data, open_library_data
         )
-
-        print(independent_dimensions.get("date_dimension"))
-        print(independent_dimensions.get("publisher_dimension"))
-        print(independent_dimensions.get("author_dimension"))
-        print(independent_dimensions.get("genre_dimension"))
 
         book_dimension = Transformer().transform_book_data(
             google_books_data, open_library_data
         )
 
-        time.sleep(1000)
+        # ! load independent dimensions
+        dim_response = Loader().load_independent_dimensions(
+            logger, independent_dimensions
+        )
 
-        # TODO: add pydantic validation in transform
+        # ! load dim_books, and the bridge tables
+
+        # TODO: add pydantic validation inside all loading phase
         # TODO: add worker_stats after loading to database
     print_summary(logger, worker_stats)
 

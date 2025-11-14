@@ -94,10 +94,10 @@ class Transformer:
         genre_dimension: dict = GenreTransformer.transform_genre(gb_book_info)
 
         return {
-            "date_dimension": date_dimension,
-            "publisher_dimension": publisher_dimension,
-            "author_dimension": author_dimension,
-            "genre_dimension": genre_dimension,
+            "dim_date": date_dimension,
+            "dim_publisher": publisher_dimension,
+            "dim_author": author_dimension,
+            "dim_genre": genre_dimension,
         }
 
     @staticmethod

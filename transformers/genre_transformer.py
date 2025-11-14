@@ -9,15 +9,15 @@ class GenreTransformer:
     """
 
     @staticmethod
-    def transform_genre(gb_info: Dict) -> Optional[str]:
+    def transform_genre(gb_info: Dict) -> List[Dict]:
         """
-        Clean and normalize a single genre name.
+        Clean and normalize genre names into dimension records.
 
         Args:
-            genre_name: Raw genre/category name from API
+            gb_info: Google Books info dictionary containing categories
 
         Returns:
-            Cleaned genre name in lowercase, or None if invalid
+            List of genre dimension records (dicts with 'name' key)
         """
 
         genres = gb_info.get("categories", [])
@@ -27,12 +27,12 @@ class GenreTransformer:
         for genre_name in genres:
             # 1. Handle null/empty
             if not genre_name or not isinstance(genre_name, str):
-                return None
+                continue
 
             # 2. Strip whitespace
             cleaned = genre_name.strip()
             if not cleaned:
-                return None
+                continue
 
             # 3. Normalize to lowercase
             cleaned = cleaned.lower()
@@ -46,8 +46,8 @@ class GenreTransformer:
 
             # 6. Validate length (genres shouldn't be too long)
             if len(cleaned) > 100:
-                return None
+                continue
 
-            cleaned_genres.append(cleaned)
+            cleaned_genres.append({"genre_name": cleaned})
 
         return cleaned_genres
