@@ -3,8 +3,7 @@ Class to extract and transform book titles from multiple API sources.
 """
 
 import re
-from typing import Optional, Dict, List, Tuple
-from datetime import datetime, timezone
+from typing import Optional, Dict, List, Tuple, Any
 from difflib import SequenceMatcher
 from logging import Logger
 
@@ -237,4 +236,55 @@ class BookTransformer:
             or None,  # Use None instead of 0 to satisfy DB constraint
             "cover_image_id": gb_book_info.get("imageLinks", {}).get("thumbnail", ""),
             "work_key": "",  # this is not needed for now
+        }
+
+    @staticmethod
+    def transform_book_metrics(
+        google_books_data: Optional[Dict[str, Any]],
+        open_library_data: Optional[Dict[str, Any]],
+    ) -> Dict:
+        """
+        Transform book metrics data from both APIs.
+
+        Google Books provides: rating_avg, rating_count, list_price_amount,
+                             retail_price_amount, currency_code, is_ebook_available,
+                             saleability_status
+        Open Library provides: edition_count
+
+        Args:
+            book_isbn: ISBN of the book
+            google_books_data: Raw Google Books API response (full response with items array)
+            open_library_data: Raw Open Library API response (full response with docs array)
+
+        Returns:
+            Dict with all fact_book_metrics fields ready for database insertion
+        """
+        # Extract nested data from Google Books
+        gb_items = google_books_data.get("items", []) if google_books_data else []
+        if not gb_items:
+            gb_volume_info = {}
+            gb_sale_info = {}
+        else:
+            gb_item = gb_items[0]
+            gb_volume_info = gb_item.get("volumeInfo", {})
+            gb_sale_info = gb_item.get("saleInfo", {})
+
+        # Extract edition count from Open Library
+        ol_docs = open_library_data.get("docs", []) if open_library_data else []
+        ol_edition_count = ol_docs[0].get("edition_count") if ol_docs else None
+
+        # Extract pricing info
+        list_price = gb_sale_info.get("listPrice", {})
+        retail_price = gb_sale_info.get("retailPrice", {})
+
+        return {
+            "rating_avg": gb_volume_info.get("averageRating"),
+            "rating_count": gb_volume_info.get("ratingsCount"),
+            "edition_count": ol_edition_count,
+            "list_price_amount": list_price.get("amount"),
+            "retail_price_amount": retail_price.get("amount"),
+            "currency_code": list_price.get("currencyCode")
+            or retail_price.get("currencyCode"),
+            "is_ebook_available": gb_sale_info.get("isEbook", False),
+            "saleability_status": gb_sale_info.get("saleability"),
         }

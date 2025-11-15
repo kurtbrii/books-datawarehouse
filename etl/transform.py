@@ -51,7 +51,7 @@ class Transformer:
         gb_book_info: dict = gb_general_info.get("volumeInfo", {})
 
         # ol = Open Library
-        ol_general_info: dict = open_library_data.get("docs", [{}])[0]
+        ol_general_info: dict = (open_library_data or {}).get("docs", [{}])[0]
 
         return gb_book_info, gb_general_info, ol_general_info
 
@@ -117,8 +117,21 @@ class Transformer:
             google_books_data, open_library_data
         )
 
-        book_dimension: dict = BookTransformer.transform_book(
+        return BookTransformer.transform_book(
             gb_book_info, gb_general_info, ol_general_info
         )
 
-        return book_dimension
+    @staticmethod
+    def transform_fact_book_metrics(
+        google_books_data: Optional[Dict[str, Any]],
+        open_library_data: Optional[Dict[str, Any]],
+    ) -> dict:
+        """
+        Transform book metrics data from both APIs.
+
+        Google Books: rating_avg, rating_count, prices, currency, ebook availability, saleability
+        Open Library: edition_count
+        """
+        return BookTransformer.transform_book_metrics(
+            google_books_data, open_library_data
+        )

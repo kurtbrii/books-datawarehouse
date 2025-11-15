@@ -74,3 +74,17 @@ class Loader:
                     f"{bridge_dim_name}_id": dim_id,
                 },
             )
+
+    @staticmethod
+    def load_fact_table(
+        logger: Logger,
+        fact_table_name: str,
+        metadata: Dict[str, Any],
+    ) -> None:
+
+        response_data = GeneralLoader.general_loader(
+            fact_table_name,
+            metadata,
+        )
+
+        return response_data[0]["metric_id"]

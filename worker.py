@@ -78,16 +78,20 @@ def main():
             logger, supabase_client, job_data
         )
 
-        if not google_books_data or not open_library_data:
+        if not google_books_data and not open_library_data:
             logger.error(f"❌ Failed to extract data for ISBN {isbn}")
             continue
 
-        # ! transform independent dimensions and book dimension
+        # ! transform independent dimensions, book dimension, and book metrics
         independent_dimensions = Transformer().transform_independent_dimensions(
             logger, google_books_data, open_library_data
         )
 
         book_dimension = Transformer().transform_book_data(
+            google_books_data, open_library_data
+        )
+
+        fact_book_metrics = Transformer().transform_fact_book_metrics(
             google_books_data, open_library_data
         )
 
@@ -124,6 +128,17 @@ def main():
             dim_book_isbn,
             dims_pk_id["dim_genre"],
             "genre",
+        )
+
+        # ! load fact_book_metrics
+        Loader().load_fact_table(
+            logger=logger,
+            fact_table_name="fact_book_metrics",
+            metadata={
+                **fact_book_metrics,
+                "snapshot_date_key": dims_pk_id["dim_date"][0],
+                "isbn": dim_book_isbn,
+            },
         )
 
     print_summary(logger, worker_stats)

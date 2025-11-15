@@ -39,7 +39,7 @@ class Extractor:
         open_library_data = OpenLibraryExtractor().extract(logger, isbn)
 
         # Check if both APIs succeeded
-        if google_books_data and open_library_data:
+        if google_books_data or open_library_data:
             Extractor._handle_success(logger, supabase_client, job_id, isbn)
         else:
             Extractor._handle_failure(
