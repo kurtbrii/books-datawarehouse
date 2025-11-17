@@ -250,10 +250,63 @@ Comprehensive indexing for query performance:
 ### Processing Steps
 
 1. **Publisher Phase:** Read CSV file and create jobs
-2. **Worker Phase:** Process jobs from queue
+2. **Worker Phase:** Process jobs from queue with transaction management
 3. **Extract Phase:** Query both APIs for book data
 4. **Transform Phase:** Merge, validate, and clean data
-5. **Load Phase:** Insert into warehouse with error handling
+5. **Load Phase:** Insert into warehouse with atomic operations
+
+### Error Handling & Resilience
+
+The worker implements comprehensive error handling and transaction management:
+
+#### Try-Catch Wrapper
+- Entire ETL pipeline (extract → transform → load) wrapped in exception handling
+- Catches specific exceptions: `ValueError`, `KeyError`, `IndexError`, `TypeError`
+- Prevents partial data loads and maintains data integrity
+
+#### Commit Strategy
+- Job status updated to `COMPLETED` **only after** all operations succeed
+- All dimensions, fact tables, and bridge tables loaded successfully
+- Ensures consistency across the warehouse
+
+#### Rollback Strategy
+- **Transient Failures:** Job reset to `PENDING` status with incremented `retry_count`
+- **Permanent Failures:** Job marked as `FAILED` after `RETRY_MAX_ATTEMPTS` exceeded
+- Error details stored in database for debugging and root cause analysis
+- Automatic retry up to `RETRY_MAX_ATTEMPTS` (configurable, default: 3)
+
+#### Job Status Tracking
+| Status | Description |
+|--------|-------------|
+| `pending` | Ready to process or marked for retry |
+| `processing` | Extraction complete, in transformation/loading phase |
+| `completed` | Successfully loaded to warehouse |
+| `failed` | Exceeded max retry attempts, requires investigation |
+
+#### Monitoring & Debugging
+
+Check failed or pending jobs:
+```sql
+SELECT job_id, isbn, status, error_message, retry_count, updated_at
+FROM jobs 
+WHERE status IN ('failed', 'pending') 
+ORDER BY updated_at DESC;
+```
+
+Enable debug logging for detailed execution trace:
+```bash
+LOG_LEVEL=DEBUG python worker.py
+```
+
+Check job processing statistics:
+```sql
+SELECT 
+  status,
+  COUNT(*) as count,
+  COUNT(CASE WHEN retry_count > 0 THEN 1 END) as retried
+FROM jobs
+GROUP BY status;
+```
 
 ## Analytics Queries
 
@@ -323,8 +376,11 @@ SELECT job_id, status, error_message, retry_count FROM jobs WHERE status = 'fail
 ## Success Criteria
 
 - ✅ Functional ETL pipeline for both APIs
-- ✅ < 5% failed jobs with proper error handling
-- ✅ All foreign keys valid, no orphaned records
+- ✅ Comprehensive error handling with automatic retry logic (up to 3 attempts)
+- ✅ Transactional integrity: commit only on success, rollback on failure
+- ✅ < 5% permanently failed jobs after all retry attempts
+- ✅ All foreign keys valid, no orphaned or partial records
+- ✅ Detailed error tracking and monitoring for failed jobs
 - ✅ All 15 analytical queries complete in < 5 seconds
 - ✅ Architecture scalable to 10,000+ books
 

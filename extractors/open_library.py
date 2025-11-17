@@ -8,7 +8,6 @@ class OpenLibraryExtractor(Extractor):
 
     def extract(self, logger: Logger, isbn: str) -> dict:
         """Extract Open Library data for a book using ISBN."""
-        logger.info(f"Fetching Open Library data for ISBN {isbn}")
 
         url = f"{Config.OPEN_LIBRARY_BASE_URL}/search.json?isbn={isbn}"
 

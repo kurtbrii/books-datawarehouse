@@ -34,8 +34,16 @@ class GeneralLoader:
         table_name: str,
         meta_data: Dict[str, Any],
     ) -> List[Dict[str, Any]]:
+        """
+        This method is used by both the general loader and the fact table loader.
+
+        fact_book_metrics has updated_at column, and the bridge tables do not have it.
+        """
 
         on_conflict = CONFLICT_COLUMNS.get(table_name)
+
+        if table_name == "fact_book_metrics":
+            meta_data["updated_at"] = datetime.now(timezone.utc).isoformat()
         response = (
             GeneralLoader.supabase_client.table(table_name)
             .upsert(meta_data, on_conflict=on_conflict)

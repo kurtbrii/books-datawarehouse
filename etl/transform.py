@@ -73,35 +73,48 @@ class Transformer:
             google_books_data: Raw extracted data from Google Books API
             open_library_data: Raw extracted data from Open Library API
         """
+        logger.info("🔄 Transforming independent dimensions...")
 
-        gb_book_info, _, ol_general_info = Transformer._extract_api_data(
-            google_books_data, open_library_data
-        )
+        try:
+            gb_book_info, _, ol_general_info = Transformer._extract_api_data(
+                google_books_data, open_library_data
+            )
 
-        # Call static methods directly on transformer classes
-        date_dimension: dict = DateTransformer.transform_date_attributes(
-            gb_book_info, logger
-        )
+            # Call static methods directly on transformer classes
+            logger.info("📅 Transforming date dimension...")
+            date_dimension: dict = DateTransformer.transform_date_attributes(
+                gb_book_info, logger
+            )
 
-        publisher_dimension: dict = PublisherTransformer.transform_publisher_attributes(
-            gb_book_info
-        )
+            logger.info("🏢 Transforming publisher dimension...")
+            publisher_dimension: dict = (
+                PublisherTransformer.transform_publisher_attributes(gb_book_info)
+            )
 
-        author_dimension: dict = AuthorTransformer.merge_author_sources(
-            gb_book_info, ol_general_info
-        )
+            logger.info("👤 Transforming author dimension...")
+            author_dimension: dict = AuthorTransformer.merge_author_sources(
+                gb_book_info, ol_general_info
+            )
 
-        genre_dimension: dict = GenreTransformer.transform_genre(gb_book_info)
+            logger.info("📚 Transforming genre dimension...")
+            genre_dimension: dict = GenreTransformer.transform_genre(gb_book_info)
 
-        return {
-            "dim_date": date_dimension,
-            "dim_publisher": publisher_dimension,
-            "dim_author": author_dimension,
-            "dim_genre": genre_dimension,
-        }
+            logger.info("✅ Independent dimensions transformed successfully")
+
+            return {
+                "dim_date": date_dimension,
+                "dim_publisher": publisher_dimension,
+                "dim_author": author_dimension,
+                "dim_genre": genre_dimension,
+            }
+
+        except Exception as e:
+            logger.error("❌ Failed to transform independent dimensions: %s", str(e))
+            raise
 
     @staticmethod
     def transform_book_data(
+        logger: Logger,
         google_books_data: Optional[Dict[str, Any]],
         open_library_data: Optional[Dict[str, Any]],
     ) -> Dict[str, Any]:
@@ -109,20 +122,31 @@ class Transformer:
         Transform book data from multiple API sources.
 
         Args:
-            gb_book_info: Raw extracted data from Google Books API
-            gb_general_info: Raw extracted data from Google Books API
-            ol_general_info: Raw extracted data from Open Library API
+            logger: Logger instance for audit trail and debugging
+            google_books_data: Raw extracted data from Google Books API
+            open_library_data: Raw extracted data from Open Library API
         """
-        gb_book_info, gb_general_info, ol_general_info = Transformer._extract_api_data(
-            google_books_data, open_library_data
-        )
+        logger.info("📖 Transforming book dimension...")
 
-        return BookTransformer.transform_book(
-            gb_book_info, gb_general_info, ol_general_info
-        )
+        try:
+            gb_book_info, gb_general_info, ol_general_info = (
+                Transformer._extract_api_data(google_books_data, open_library_data)
+            )
+
+            book_data = BookTransformer.transform_book(
+                gb_book_info, gb_general_info, ol_general_info
+            )
+
+            logger.info("✅ Book dimension transformed successfully")
+            return book_data
+
+        except Exception as e:
+            logger.error("❌ Failed to transform book dimension: %s", str(e))
+            raise
 
     @staticmethod
     def transform_fact_book_metrics(
+        logger: Logger,
         google_books_data: Optional[Dict[str, Any]],
         open_library_data: Optional[Dict[str, Any]],
     ) -> dict:
@@ -131,7 +155,22 @@ class Transformer:
 
         Google Books: rating_avg, rating_count, prices, currency, ebook availability, saleability
         Open Library: edition_count
+
+        Args:
+            logger: Logger instance for audit trail and debugging
+            google_books_data: Raw extracted data from Google Books API
+            open_library_data: Raw extracted data from Open Library API
         """
-        return BookTransformer.transform_book_metrics(
-            google_books_data, open_library_data
-        )
+        logger.info("📊 Transforming fact book metrics...")
+
+        try:
+            metrics = BookTransformer.transform_book_metrics(
+                google_books_data, open_library_data
+            )
+
+            logger.info("✅ Fact book metrics transformed successfully")
+            return metrics
+
+        except Exception as e:
+            logger.error("❌ Failed to transform fact book metrics: %s", str(e))
+            raise

@@ -42,9 +42,11 @@ def update_job_status(
             "updated_at": "now()",  # Supabase will handle this
         }
 
+        # Only include retry_count if explicitly provided
         if retry_count is not None:
             update_payload["retry_count"] = retry_count
 
+        # Only include error_message if explicitly provided
         if error_message is not None:
             update_payload["error_message"] = error_message
 

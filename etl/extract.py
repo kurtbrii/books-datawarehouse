@@ -62,7 +62,12 @@ class Extractor:
         logger.info(f"✅ Both APIs succeeded for ISBN {isbn}")
 
         if update_job_status(
-            logger, supabase_client, job_id, status=JobStatus.PROCESSING
+            logger,
+            supabase_client,
+            job_id,
+            status=JobStatus.PROCESSING,
+            error_message="",
+            retry_count=0,
         ):
             logger.info(f"✅ Updated ISBN {isbn} to processing status")
         else:
