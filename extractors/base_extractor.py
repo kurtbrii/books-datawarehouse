@@ -7,6 +7,8 @@ from logging import Logger
 
 
 class Extractor(ABC):
+    """Abstract base class providing HTTP helpers for API extractors."""
+
     @staticmethod
     def _fetch_from_api(
         url: str, logger: Logger, isbn: str, api_name: str

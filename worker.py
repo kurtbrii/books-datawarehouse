@@ -8,13 +8,12 @@ import time
 from logging import Logger
 from typing import Dict
 
-
-from helpers.utils import update_job_status
 from config import Config
-from models.job import JobStatus
 from etl.extract import Extractor
-from etl.transform import Transformer
 from etl.load import Loader
+from etl.transform import Transformer
+from helpers.utils import update_job_status
+from models.job import JobStatus
 
 
 def print_summary(logger: Logger, stats: Dict[str, int]) -> None:
@@ -38,6 +37,7 @@ def print_summary(logger: Logger, stats: Dict[str, int]) -> None:
 
 
 def main():
+    """Run the worker pipeline: fetch jobs, execute ETL phases, and update stats."""
     logger = Config.setup_logging()
     logger.info("=" * 60)
     logger.info("🚀 Worker: Starting job processing")

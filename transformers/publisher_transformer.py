@@ -25,14 +25,14 @@ class PublisherTransformer:
         6. Provide ASCII version for search
         """
 
-        publisher_str = gb_info.get("publisher", None)
+        publisher_str = (gb_info or {}).get("publisher", None)
         if not publisher_str or not isinstance(publisher_str, str):
-            return {"name": None}
+            return {"name": "Unknown Publisher"}
 
         # 1. Basic whitespace cleanup
         cleaned = " ".join(publisher_str.strip().split())
         if not cleaned:
-            return {"name": None}
+            return {"name": "Unknown Publisher"}
 
         # 2. Smart case normalization (only if fully uppercase/lowercase)
         if cleaned.isupper() or cleaned.islower():
@@ -58,4 +58,6 @@ class PublisherTransformer:
             r"\b(U\.?S\.?|UK|EU|CA|AU)\b$", "", cleaned, flags=re.IGNORECASE
         ).strip()
 
-        return {"name": cleaned}
+        final_name = cleaned if cleaned else "Unknown Publisher"
+
+        return {"name": final_name}
